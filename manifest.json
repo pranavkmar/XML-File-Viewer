@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "XML File Viewer",
+  "version": "1.0",
+  "description": "A Chrome extension to view XML files from a specified folder.",
+  "action": {
+    "default_icon": {
+      "16": "images/icon16.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    }
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

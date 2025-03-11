@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML File Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+        }
+    </style>
+    <script src="code-prettify.js"></script>
+</head>
+<body>
+    <h1>XML File Viewer</h1>
+    <input type="file" id="fileInput" accept=".xml" multiple>
+    <select id="fileList">
+        <option value="">Select a file</option>
+    </select>
+    <div id="fileContent" style="margin-top: 10px;"></div>
+    <script src="newtab.js"></script>
+</body>
+</html>
