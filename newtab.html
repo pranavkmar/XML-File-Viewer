@@ -5,88 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XML File Viewer - All Tables</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .xml-file-section {
-            margin-bottom: 50px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-        }
-        .toc {
-            position: sticky;
-            top: 0;
-            background: white;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            z-index: 100;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        body {
-            padding-top: 20px;
-            padding-bottom: 40px;
-        }
-        .table {
-            margin-top: 15px;
-            width: 100%;
-        }
-        .table-responsive {
-            overflow-x: auto;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        .badge {
-            margin-right: 5px;
-        }
-        th {
-            position: sticky;
-            top: 0;
-            background-color: #f8f9fa;
-            z-index: 10;
-        }
-        .toc-list {
-            max-height: 300px;
-            overflow-y: auto;
-            columns: 3;
-        }
-        @media (max-width: 768px) {
-            .toc-list {
-                columns: 1;
-            }
-        }
-        h2 {
-            margin-top: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .file-count {
-            margin-left: 10px;
-            font-size: 0.9em;
-            color: #6c757d;
-        }
-    </style>
     <!-- No external scripts needed -->
 </head>
 <body>
-    <div id="top" class="container">
-        <h1>XML File Viewer - All Tables</h1>
-        
+    <!-- Sticky Navbar -->
+    <div class="sticky-navbar">
+        <h1>XML File Viewer</h1>
+        <a href="#top" class="up-arrow">↑</a>
+    </div>
+    
+    <!-- Left Sidebar for TOC -->
+    <div id="sidebar" class="sidebar">
+        <button id="exportHtml" class="export-btn">Export HTML</button>
+        <div class="spacer-20"></div>
+        <div class="sidebar-tab">TOC</div>
+        <div class="toc-header">
+            <h3>Table of Contents <span id="fileCount" class="file-count">(0 files)</span></h3>
+            <button id="tocToggle" class="toc-toggle">Collapse</button>
+        </div>
+        <div class="toc-list">
+            <ol id="tocList">
+                <!-- Will be populated dynamically -->
+            </ol>
+        </div>
+    </div>
+    
+    <div id="top" class="container main-content">
         <div class="mb-4">
             <input type="file" id="fileInput" accept=".xml" multiple class="form-control">
             <div class="form-text">Select multiple XML files to view them all at once</div>
-        </div>
-        
-        <!-- Table of Contents -->
-        <div id="tocContainer" class="toc d-none">
-            <div class="toc-header">
-                <h3>Table of Contents <span id="fileCount" class="file-count">(0 files)</span></h3>
-                <button id="tocToggle" class="toc-toggle">Collapse</button>
-            </div>
-            <div class="toc-list">
-                <ol id="tocList">
-                    <!-- Will be populated dynamically -->
-                </ol>
-            </div>
         </div>
         
         <!-- XML content tables - all displayed at once -->

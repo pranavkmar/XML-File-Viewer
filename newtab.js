@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     const fileInput = document.getElementById('fileInput');
-    const tocContainer = document.getElementById('tocContainer');
+    const sidebar = document.getElementById('sidebar');
     const tocList = document.getElementById('tocList');
     const fileCountSpan = document.getElementById('fileCount');
     const xmlContent = document.getElementById('xmlContent');
     const timestampElement = document.getElementById('timestamp');
+    const stickyNavbar = document.querySelector('.sticky-navbar');
+    const exportHtmlBtn = document.getElementById('exportHtml');
     
     // Update timestamp
     const now = new Date();
@@ -14,25 +16,76 @@ document.addEventListener('DOMContentLoaded', function () {
     const tocToggle = document.getElementById('tocToggle');
     if (tocToggle) {
         tocToggle.addEventListener('click', function() {
-            const toc = document.getElementById('tocContainer');
-            toc.classList.toggle('collapsed');
-            tocToggle.textContent = toc.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+            sidebar.classList.toggle('collapsed');
+            tocToggle.textContent = sidebar.classList.contains('collapsed') ? 'Expand' : 'Collapse';
         });
-        
-        // Auto-collapse TOC when scrolling down
-        let lastScrollTop = 0;
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // Scrolling down
-                tocContainer.classList.add('collapsed');
-                tocToggle.textContent = 'Expand';
-            } else if (scrollTop < 50) {
-                // Scrolling to top
-                tocContainer.classList.remove('collapsed');
-                tocToggle.textContent = 'Collapse';
-            }
-            lastScrollTop = scrollTop;
+    }
+    
+    // Toggle sidebar expansion
+    const sidebarTab = document.querySelector('.sidebar-tab');
+    if (sidebarTab) {
+        sidebarTab.addEventListener('click', function() {
+            sidebar.classList.toggle('expanded');
+        });
+    }
+    
+    // Handle navbar shrinking on scroll
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > 50) {
+            stickyNavbar.classList.add('scrolled');
+        } else {
+            stickyNavbar.classList.remove('scrolled');
+        }
+    });
+    
+    // Export HTML functionality
+    if (exportHtmlBtn) {
+        exportHtmlBtn.addEventListener('click', function() {
+            // Create a new document with current content
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>XML File Export</title>
+                    <style>
+                        .export-html-body { font-family: Arial, sans-serif; padding: 20px; }
+                        .xml-file-section { margin-bottom: 50px; border: 1px solid #ddd; border-radius: 5px; padding: 15px; }
+                        .export-html-h1 { color: #333; }
+                        h2 { margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+                        .export-html-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                        .export-html-th, .export-html-td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+                        .export-html-th { background-color: #f8f9fa; position: sticky; top: 0; z-index: 1; border-bottom: 2px solid #dee2e6; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+                        .export-html-badge { display: inline-block; padding: 3px 6px; font-size: 12px; font-weight: 700;
+                                line-height: 1; color: #fff; background-color: #6c757d; border-radius: 4px; margin-right: 5px; }
+                    </style>
+                </head>
+                <body class="export-html-body">
+                    <h1 class="export-html-h1">XML File Export</h1>
+                    ${document.getElementById('xmlContent').innerHTML.replace(/table class="table/g, 'table class="export-html-table').replace(/<th/g, '<th class="export-html-th"').replace(/<td/g, '<td class="export-html-td"').replace(/badge bg-secondary/g, 'export-html-badge')}
+                    <footer>
+                        <p>Exported on ${new Date().toLocaleString()}</p>
+                    </footer>
+                </body>
+                </html>
+            `;
+            
+            // Create a blob and download link
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'xml-export-' + new Date().toISOString().slice(0, 10) + '.html';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 0);
         });
     }
     
@@ -60,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Reset the TOC
         tocList.innerHTML = '';
         fileCountSpan.textContent = `(${filenames.length} files)`;
-        tocContainer.classList.remove('d-none');
+        sidebar.classList.add('expanded'); // Show the sidebar
         
         // Load each file
         Promise.all(filenames.map(filename => {
@@ -153,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const files = Array.from(fileInput.files);
         
         if (files.length === 0) {
-            tocContainer.classList.add('d-none');
+            sidebar.classList.remove('expanded'); // Hide sidebar
             xmlContent.innerHTML = '';
             return;
         }
@@ -164,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Reset the TOC and content
         tocList.innerHTML = '';
         fileCountSpan.textContent = `(${files.length} files)`;
-        tocContainer.classList.remove('d-none');
+        sidebar.classList.add('expanded'); // Show sidebar
         
         // Process all files
         Promise.all(files.map(processXmlFile))
@@ -284,11 +337,14 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
     
-    function flattenXmlStructure(elements, parentPath = "") {
+    function flattenXmlStructure(elements, rootName = "", parentPath = "") {
         let flattened = [];
         
         elements.forEach(element => {
-            const currentPath = parentPath ? `${parentPath}/${element.name}` : element.name;
+            // Create the current path, using rootName as the parent for top-level elements
+            const currentPath = parentPath
+                ? `${parentPath}/${element.name}`
+                : (rootName ? `${rootName}/${element.name}` : element.name);
             
             // Add current element
             flattened.push({
@@ -300,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Add children recursively
             if (element.children && element.children.length > 0) {
-                const childElements = flattenXmlStructure(element.children, currentPath);
+                const childElements = flattenXmlStructure(element.children, "", currentPath);
                 flattened = flattened.concat(childElements);
             }
         });
@@ -348,13 +404,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create table body
         const tbody = document.createElement('tbody');
         
-        // Flatten the XML structure for table representation
-        const flattened = flattenXmlStructure([{
-            name: xmlData.root_tag,
-            value: "",
-            attributes: {},
-            children: xmlData.elements
-        }]);
+        // Extract the root element name for the settings
+        const rootElementName = xmlData.root_tag.includes(':')
+            ? xmlData.root_tag.split(':')[1]
+            : xmlData.root_tag;
+            
+        // Flatten the XML structure for table representation, but skip the root element in the display
+        // since it's already shown in the "Root Element" info above the table
+        const flattened = flattenXmlStructure(xmlData.elements, rootElementName);
         
         // Generate table rows
         flattened.forEach(element => {
