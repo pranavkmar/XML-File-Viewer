@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     const fileList = document.getElementById('fileList');
     const fileContent = document.getElementById('fileContent');
+    const viewAllBtn = document.getElementById('viewAllBtn');
+    const openUploadBtn = document.getElementById('openUploadBtn');
 
-    // Simulate fetching filenames from a specified folder
+    // Predefined XML files
     const filenames = [
         'Account.settings-meta.xml',
         'Accounting.settings-meta.xml',
@@ -22,7 +24,9 @@ document.addEventListener('DOMContentLoaded', function () {
     fileList.addEventListener('change', function () {
         const selectedFile = fileList.value;
         if (selectedFile) {
-            // Simulate fetching file content
+            // Show loading message
+            fileContent.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+            
             // Fetch actual XML file from settings directory
             const filePath = `settings/${selectedFile}`;
             fetch(chrome.runtime.getURL(filePath))
@@ -41,10 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     fileContent.innerHTML = `<pre>${formattedXml}</pre>`;
                 })
                 .catch(error => {
-                    fileContent.textContent = `Error loading file: ${error.message}`;
+                    fileContent.innerHTML = `<div class="alert alert-danger">Error loading file: ${error.message}</div>`;
                 });
         } else {
             fileContent.textContent = '';
         }
+    });
+    
+    // View all files in a new tab
+    viewAllBtn.addEventListener('click', function() {
+        // Store filenames in localStorage for the new tab to access
+        localStorage.setItem('predefinedFiles', JSON.stringify(filenames));
+        // Open new tab with a flag to load all files
+        window.open('newtab.html?viewAll=true', '_blank');
+    });
+    
+    // Open the upload page in a new tab
+    openUploadBtn.addEventListener('click', function() {
+        window.open('newtab.html', '_blank');
     });
 });

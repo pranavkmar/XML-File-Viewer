@@ -1,3 +1,5 @@
+// Listen for clicks on the extension icon
 chrome.action.onClicked.addListener(() => {
-    chrome.tabs.create({ url: 'newtab.html' });
+    // Open popup instead of creating a tab
+    chrome.action.openPopup();
 });

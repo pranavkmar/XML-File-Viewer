@@ -3,24 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XML File Viewer</title>
+    <title>XML File Viewer - All Tables</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 10px;
+            min-width: 400px;
+            max-height: 600px;
+            overflow-y: auto;
         }
-        select {
-            width: 100%;
-            padding: 5px;
+        .btn-view-all {
+            margin-top: 10px;
         }
     </style>
 </head>
-<body>
+<body class="popup-body">
     <h1>XML File Viewer</h1>
-    <select id="fileList">
+    <p>View predefined XML files:</p>
+    <select id="fileList" class="form-select">
         <option value="">Select a file</option>
     </select>
-    <div id="fileContent" style="margin-top: 10px; white-space: pre-wrap; font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 4px;"></div>
+    <div id="fileContent" class="code-content"></div>
+    
+    <div class="d-grid gap-2">
+        <button id="viewAllBtn" class="btn btn-primary btn-view-all">View All Files in New Tab</button>
+        <button id="openUploadBtn" class="btn btn-outline-secondary btn-view-all">Upload Custom XML Files</button>
+    </div>
+    
     <script src="popup.js"></script>
 </body>
 </html>
