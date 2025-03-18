@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Predefined XML files
     const filenames = [
-        'Account.settings-meta.xml',
-        'Accounting.settings-meta.xml',
-        'Activities.settings-meta.xml'
+        'Test.settings-meta.xml'
+        // 'Accounting.settings-meta.xml',
+        // 'Activities.settings-meta.xml'
         // Add more filenames as needed
     ];
 
@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
             // Show loading message
             fileContent.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
             
-            // Fetch actual XML file from settings directory
-            const filePath = `settings/${selectedFile}`;
+            // Fetch actual XML file from sample directory
+            const filePath = `sample/${selectedFile}`;
             fetch(chrome.runtime.getURL(filePath))
                 .then(response => response.text())
                 .then(xmlText => {
@@ -57,11 +57,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Store filenames in localStorage for the new tab to access
         localStorage.setItem('predefinedFiles', JSON.stringify(filenames));
         // Open new tab with a flag to load all files
-        window.open('newtab.html?viewAll=true', '_blank');
+        console.log('Opening new tab with xml-viewer.html?viewAll=true');
+        window.open('xml-viewer.html?viewAll=true', '_blank');
     });
     
     // Open the upload page in a new tab
     openUploadBtn.addEventListener('click', function() {
-        window.open('newtab.html', '_blank');
+        console.log('Opening new tab with xml-viewer.html');
+        window.open('xml-viewer.html', '_blank');
     });
 });

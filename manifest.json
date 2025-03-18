@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "XML File Viewer - All Tables",
+  "name": "XML File Viewer",
   "version": "1.1",
-  "description": "A Chrome extension to view all XML files at once in table format.",
+  "description": "A lightweight Chrome extension to view and analyze XML files in structured tables. Quick visualization of Salesforce metadata files.",
+  "homepage_url": "https://informbytes.com/xml-extension-info",
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -12,6 +18,14 @@
     }
   },
   "permissions": [],
+  "web_accessible_resources": [{
+    "resources": ["sample/*.xml"],
+    "matches": [],
+    "use_dynamic_url": false
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "background": {
     "service_worker": "background.js"
   }
